@@ -6,10 +6,10 @@
 >> systemctl stop dhcpcd
 >> sudo ip addr add 10.10.10.201/24 dev ens18
 >> sudo ip route add default via 10.10.10.1 dev ens18
->> sudo cat > /etc/resolv.conf < EOF
+>> sudo bash -c "cat << EOF >> /etc/resolv.conf 
    nameserver 223.5.5.5
    nameserver 8.8.8.8
-   EOF
+   EOF"
 ```
 
 ### Passwd
