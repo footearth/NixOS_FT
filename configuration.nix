@@ -56,15 +56,15 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    ntp
-    busybox inetutils
-    iw wpa_supplicant networkmanager
-    htop nload ncdu
-    mosh tmux vim wget
-    zsh fish
-    z-lua
-    bat ag fd fzf
-    git tig
+    busybox 
+    # ntp inetutils iw wpa_supplicant networkmanager
+    # htop nload ncdu
+    # mosh tmux zsh fish vim
+    # wget curl httpie
+    # bash-it oh-my-zsh oh-my-fish
+    # bat ag fd fzf z-lua autojump
+    # jethrokuan/z jethrokuan/fzf
+    # git tig
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
