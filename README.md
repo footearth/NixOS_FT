@@ -1,6 +1,49 @@
 # NixOS Config
 
-## Mirror
+### Mount
+
+```bash
+>> sudo mkfs.fat -F32 /dev/sda1
+>> sudo mkswap /dev/sda2
+>> sudo mkfs.ext4 /dev/sda3
+
+>> sudo mount /dev/sda3 /mnt
+>> sudo swapon /dev/sda2
+>> sudo mkdir /mnt/boot
+>> sudo mount /dev/sda1 /mnt/book
+
+>> sudo umount /dev/sda1
+>> sudo swapoff /dev/sda2
+>> sudo umount /dev/sda3
+```
+
+### Net
+
+```bash
+>> systemctl stop dhcpd
+>> sudo ip addr add 10.10.10.201 dev ens18
+>> sudo ip addr add 10.10.10.201 dev ens18
+>> sudo cat > /etc/resolv.conf < EOF
+   nameserver 223.5.5.5
+   nameserver 8.8.8.8
+   EOF
+```
+
+### Passwd
+
+```bash
+>> sudo su -
+>> passwd
+>> passwd nixos
+```
+
+### sshd
+
+```bash
+>> systemctl start sshd
+```
+
+### Channel
 
 ```bash
 # https://mirrors.tuna.tsinghua.edu.cn/help/nix/
