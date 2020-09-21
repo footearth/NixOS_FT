@@ -56,7 +56,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    busybox 
+    busybox home-manager
     # ntp inetutils iw wpa_supplicant networkmanager
     # htop nload ncdu
     # mosh tmux zsh fish vim
