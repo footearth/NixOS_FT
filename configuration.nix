@@ -50,7 +50,7 @@
 
   nix.binaryCaches = [
     "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
-    "https://cache.nixos.org/"
+    # "https://cache.nixos.org/"
   ];
 
   # List packages installed in system profile. To search, run:
