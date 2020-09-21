@@ -1,28 +1,11 @@
 # NixOS Config
 
-### Mount
-
-```bash
->> sudo mkfs.fat -F32 /dev/sda1
->> sudo mkswap /dev/sda2
->> sudo mkfs.ext4 /dev/sda3
-
->> sudo mount /dev/sda3 /mnt
->> sudo swapon /dev/sda2
->> sudo mkdir /mnt/boot
->> sudo mount /dev/sda1 /mnt/book
-
->> sudo umount /dev/sda1
->> sudo swapoff /dev/sda2
->> sudo umount /dev/sda3
-```
-
 ### Net
 
 ```bash
->> systemctl stop dhcpd
->> sudo ip addr add 10.10.10.201 dev ens18
->> sudo ip addr add 10.10.10.201 dev ens18
+>> systemctl stop dhcpcd
+>> sudo ip addr add 10.10.10.201/24 dev ens18
+>> sudo ip route add default via 10.10.10.1 dev ens18
 >> sudo cat > /etc/resolv.conf < EOF
    nameserver 223.5.5.5
    nameserver 8.8.8.8
@@ -41,6 +24,23 @@
 
 ```bash
 >> systemctl start sshd
+```
+
+### Mount
+
+```bash
+>> sudo mkfs.fat -F32 /dev/sda1
+>> sudo mkswap /dev/sda2
+>> sudo mkfs.ext4 /dev/sda3
+
+>> sudo mount /dev/sda3 /mnt
+>> sudo swapon /dev/sda2
+>> sudo mkdir /mnt/boot
+>> sudo mount /dev/sda1 /mnt/book
+
+>> sudo umount /dev/sda1
+>> sudo swapoff /dev/sda2
+>> sudo umount /dev/sda3
 ```
 
 ### Channel
