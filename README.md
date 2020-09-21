@@ -61,5 +61,5 @@
 >> sudo nixos-generate-config --root /mnt
 >> sudo nixos-install --option binary-caches https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store
 
->> sudo nixos-rebuild switch # -j auto --update
+>> sudo nixos-rebuild switch -j auto --option binary-caches https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store # --update
 ```
