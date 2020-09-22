@@ -30,6 +30,6 @@
     # jethrokuan/z jethrokuan/fzf
     git tig
 
-    kind
+    kind kubectl kubectx k9s
   ];
 }
