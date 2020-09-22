@@ -66,7 +66,10 @@
     # bat ag fd fzf z-lua autojump
     ## jethrokuan/z jethrokuan/fzf
     # git tig
+    docker
   ];
+ 
+  virtualisation.docker.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -111,7 +114,10 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nixos = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "wheel"  # Enable ‘sudo’ for the user.
+      "docker"
+    ];
   };
 
   # This value determines the NixOS release from which the default

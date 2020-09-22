@@ -29,5 +29,7 @@
     bat ag fd fzf z-lua autojump
     # jethrokuan/z jethrokuan/fzf
     git tig
+
+    kind
   ];
 }
