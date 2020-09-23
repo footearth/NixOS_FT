@@ -26,10 +26,12 @@
     mosh tmux zsh fish
     wget curl httpie
     # bash-it oh-my-zsh oh-my-fish
-    bat ag fd fzf z-lua autojump
+    jq bat ag fd fzf z-lua autojump
     # jethrokuan/z jethrokuan/fzf
     git tig
 
+    openssl
+    # docker
     kind kubectl kubectx k9s
   ];
 }
