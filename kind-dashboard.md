@@ -24,11 +24,15 @@ nodes:
 ```bash
 >> kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.4/aio/deploy/recommended.yaml
 >> kubectl get pod -n kubernetes-dashboard
->> kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=default:default
->> export token=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 -d)
->> echo $token
+
+# >> kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=default:default
+# >> export token=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 -d)
+# >> echo $token
+
 >> kubectl proxy --address="0.0.0.0" --accept-hosts='^*$'
 ```
+
+### cert
 
 ```bash
 #!/usr/bin/env bash
@@ -53,11 +57,42 @@ openssl pkcs12 -export -clcerts \
 >> http --verify=no \
      --cert ~/.kube/cert/kubecfg.crt \
      --cert-key ~/.kube/cert/kubecfg.key \
-     https://0.0.0.0:32768/api/v1/namespaces/kubernetes-dashboard/services/kubernetes-dashboard \
+     https://0.0.0.0:36679/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ \
      | jq | bat
 
->> rsync -avz $username@$host_ip:~/.kube/cert ./
+>> rsync -avz $username@$host_ip:~/kind/cert/kubeconf.p12 ./
 >> pk12util -i ./kubecfg.p12 -d sql:$HOME/.pki/nssdb -W ''
+```
+
+### creating-sample-user
+
+- https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+```bash
+>> cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+>> cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+>> kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
 ```
 
 ## 参考资料
