@@ -70,6 +70,17 @@
   ];
  
   virtualisation.docker.enable = true;
+  
+  environment.etc."docker/daemon.json".text = ''
+{
+  "registry-mirrors": [
+    "https://registry.cn-hangzhou.aliyuncs.com",
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://hub-mirror.c.163.com",
+    "https://mirror.ccs.tencentyun.com"
+  ]
+}
+  '';
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

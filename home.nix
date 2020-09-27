@@ -20,11 +20,11 @@
   home.stateVersion = "20.09";
 
   home.packages = with pkgs; [
-    vim
+    vim gnumake watch
     ntp inetutils iw wpa_supplicant networkmanager
     htop nload ncdu
     mosh tmux zsh fish
-    wget curl httpie
+    wget curl aria axel httpie
     # bash-it oh-my-zsh oh-my-fish
     jq bat ag fd fzf z-lua autojump
     # jethrokuan/z jethrokuan/fzf
@@ -33,5 +33,6 @@
     openssl
     # docker
     kind kubectl kubectx k9s
+    kubernetes-helm
   ];
 }

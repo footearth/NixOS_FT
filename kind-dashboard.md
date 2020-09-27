@@ -11,7 +11,35 @@ networking:
   apiServerAddress: "0.0.0.0"
 nodes:
   - role: control-plane
+    image: kindest/node:v1.19.1
+    extraMounts:
+    - hostPath: /var/run/docker.sock
+      containerPath: /var/run/docker.sock
+    extraPortMappings:
+    - containerPort: 8080
+      hostPort: 8080
+    - containerPort: 8000
+      hostPort: 8000
+    - containerPort: 3000
+      hostPort: 3000
+      # - containerPort: 6443
+      # hostPort: 6443
+    - containerPort: 32567 # kuboard
+      hostPort: 32567
+      # optional: set the bind address on the host
+      # 0.0.0.0 is the current default
+      # listenAddress: "127.0.0.1"
+      # optional: set the protocol to one of TCP, UDP, SCTP.
+      # TCP is the default
+      # protocol: TCP
 ```
+
+## kube tools
+
+- k9s
+- k1s
+- octant
+- vela
 
 ### create cluster
 
@@ -55,12 +83,12 @@ openssl pkcs12 -export -clcerts \
 
 ```bash
 >> http --verify=no \
-     --cert ~/.kube/cert/kubecfg.crt \
-     --cert-key ~/.kube/cert/kubecfg.key \
-     https://0.0.0.0:36679/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ \
+     --cert ./kubecfg.crt \
+     --cert-key ./kubecfg.key \
+     https://0.0.0.0:6443/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ \
      | jq | bat
 
->> rsync -avz $username@$host_ip:~/kind/cert/kubeconf.p12 ./
+>> rsync -avz $username@$host_ip:~/kind/kubeconf.p12 ./
 >> pk12util -i ./kubecfg.p12 -d sql:$HOME/.pki/nssdb -W ''
 ```
 
@@ -93,6 +121,47 @@ subjects:
 EOF
 
 >> kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+```
+
+## octant
+
+```bash
+# https://github.com/vmware-tanzu/octant/releases
+>> aria $octant_tar_gz
+>> tar xvf $octant_tar_gz
+>> octant --listener-addr 0.0.0.0:7777 --disable-open-browser
+```
+
+## Kuboard
+
+```bash
+# https://kuboard.cn/install/install-dashboard.html
+>> kubectl apply -f https://kuboard.cn/install-script/kuboard-beta.yaml
+>> kubectl get pods -l k8s.kuboard.cn/name=kuboard -n kube-system
+# http://${ip}:32567
+>> echo $(kubectl -n kube-system get secret $(kubectl -n kube-system get secret | grep kuboard-user | awk '{print $1}') -o go-template='{{.data.token}}' | base64 -d)
+```
+
+## kela
+
+```bash
+# https://github.com/oam-dev/kubevela/releases
+>> aria $kela_tar_gz
+>> tar xvf $kela_tar_gz
+>> vela install
+>> vela dashboard
+```
+
+## Rainbond
+
+```bash
+## Rainbond Operator
+>> kubectl create ns rbd-system
+>> helm repo add rainbond https://openchart.goodrain.com/goodrain/rainbond
+>> helm install rainbond-operator rainbond/rainbond-operator \
+     --namespace rbd-system
+>> kubectl get pod -n rbd-system
+## Rainbond
 ```
 
 ## 参考资料
