@@ -11,21 +11,25 @@ networking:
   apiServerAddress: "0.0.0.0"
 nodes:
   - role: control-plane
-    image: kindest/node:v1.19.1
+    image: kindest/node:v1.18.6 # 1.18.8 1.19.1
     extraMounts:
     - hostPath: /var/run/docker.sock
       containerPath: /var/run/docker.sock
     extraPortMappings:
-    - containerPort: 8080
+    # - containerPort: 6443 # kubernetes-dashboard
+    # hostPort: 6443
+    - containerPort: 8080 # 8080
       hostPort: 8080
-    - containerPort: 8000
+    - containerPort: 8000 # 8000
       hostPort: 8000
-    - containerPort: 3000
+    - containerPort: 3000 # 3000
       hostPort: 3000
-      # - containerPort: 6443
-      # hostPort: 6443
+    - containerPort: 30008 # Rainbond
+      hostPort: 30008
     - containerPort: 32567 # kuboard
       hostPort: 32567
+    - containerPort: 35429 # nfs-provisioner
+      hostPort: 35429
       # optional: set the bind address on the host
       # 0.0.0.0 is the current default
       # listenAddress: "127.0.0.1"
@@ -34,17 +38,94 @@ nodes:
       # protocol: TCP
 ```
 
+```Makefile
+create:
+  kind create cluster --name moelove --config kind.yaml
+
+delete:
+  kind delete cluster --name moelove
+```
+
+## helm
+
+```bash
+>> helm repo add stable http://mirror.azure.cn/kubernetes/charts
+>> helm repo update
+>> helm repo list
+```
+
+### nfs provisioner
+
+```bash
+# https://github.com/kubernetes-sigs/kind/issues/1487
+# https://github.com/helm/charts/tree/master/stable/nfs-server-provisioner
+# https://medium.com/asl19-developers/create-readwritemany-persistentvolumeclaims-on-your-kubernetes-cluster-3a8db51f98e3
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-readwritemany-rwx-persistent-volumes-with-nfs-on-digitalocean-kubernetes
+# https://www.padok.fr/en/blog/readwritemany-nfs-kubernetes
+# https://blog.exxactcorp.com/deploying-dynamic-nfs-provisioning-in-kubernetes/
+# https://www.jianshu.com/p/5e565a8049fc
+```
+
+```bash
+>> docker pull quay.mirrors.ustc.edu.cn/kubernetes_incubator/nfs-provisioner
+>> docker pull quay.io/kubernetes_incubator/nfs-provisioner
+
+>> docker pull quay.mirrors.ustc.edu.cn/kubernetes_incubator/nfs-provisioner:v2.3.0
+>> docker pull quay.io/kubernetes_incubator/nfs-provisioner:v2.3.0
+
+>> kind load docker-image quay.io/kubernetes_incubator/nfs-provisioner:v2.3.0 --name moelove
+
+>> helm install nfs-provisioner stable/nfs-server-provisioner
+```
+
+```yaml
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-dynamic-volume-claim
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+```
+
+```bash
+>> kubectl apply -f nfs.yaml
+>> kubectl get pv
+>> kubectl get pvc
+```
+
 ## kube tools
 
 - k9s
-- k1s
-- octant
-- vela
 
-### create cluster
+### k1s
 
 ```bash
->> kind create cluster --name moelove --config kind.yaml
+>> aria2c 'https://raw.githubusercontent.com/weibeld/k1s/master/k1s'
+```
+
+### octant
+
+```bash
+# https://github.com/vmware-tanzu/octant/releases
+>> aria $octant_tar_gz
+>> tar xvf $octant_tar_gz
+>> octant --listener-addr 0.0.0.0:7777 --disable-open-browser
+```
+
+### vela
+
+```bash
+# https://github.com/oam-dev/kubevela/releases
+>> aria $kela_tar_gz
+>> tar xvf $kela_tar_gz
+>> vela install
+>> vela dashboard
 ```
 
 ## kubernetes-dashboard
@@ -122,16 +203,6 @@ EOF
 
 >> kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
 ```
-
-## octant
-
-```bash
-# https://github.com/vmware-tanzu/octant/releases
->> aria $octant_tar_gz
->> tar xvf $octant_tar_gz
->> octant --listener-addr 0.0.0.0:7777 --disable-open-browser
-```
-
 ## Kuboard
 
 ```bash
@@ -140,16 +211,6 @@ EOF
 >> kubectl get pods -l k8s.kuboard.cn/name=kuboard -n kube-system
 # http://${ip}:32567
 >> echo $(kubectl -n kube-system get secret $(kubectl -n kube-system get secret | grep kuboard-user | awk '{print $1}') -o go-template='{{.data.token}}' | base64 -d)
-```
-
-## kela
-
-```bash
-# https://github.com/oam-dev/kubevela/releases
->> aria $kela_tar_gz
->> tar xvf $kela_tar_gz
->> vela install
->> vela dashboard
 ```
 
 ## Rainbond
@@ -161,6 +222,10 @@ EOF
 >> helm install rainbond-operator rainbond/rainbond-operator \
      --namespace rbd-system
 >> kubectl get pod -n rbd-system
+
+>> kubectl get pod -n rbd-system
+>> ../../bin/k1s rbd-system
+>> kubectl logs -f rainbond-operator-0 operator -n rbd-system
 ## Rainbond
 ```
 
