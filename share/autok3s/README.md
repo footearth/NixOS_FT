@@ -1,5 +1,7 @@
 # Autok3s
 
+- other: k3sup
+
 ```bash
 # update sys
 >> sudo apt update
@@ -21,6 +23,8 @@
 >> k3d
 >> autok3s
 >> aria2c
+>> vela
+
 >> hub.fastgit.xyz
 >> chmod +x
 >> mv /usr/bin
@@ -65,12 +69,24 @@
 >> autok3s kubectl get pod --all-namespaces
 ## port
 >> autok3s kubectl get svc/ks-console -n kubesphere-system
+## forward
+>> autok3s kubectl port-forward --address 0.0.0.0 -n kubesphere-system svc/ks-console 30880:80
+```
+
+## Kubevela
+
+```bash
+>> vela install
+>> vela addon enable velaux serviceType=LoadBalancer repo=acr.kubevela.net
+>> autok3s kubectl get service velaux -n vela-system
+>> vela port-forward --address 0.0.0.0 -n vela-system addon-velaux 9082:80
 ```
 
 ## Rancher
+
 ## Kubeapps
 
-## Rainbond
+## Rainbond(failed)
 
 ```bash
 >> autok3s kubectl create namespace rbd-system
@@ -78,4 +94,5 @@
 >> helm install rainbond rainbond/rainbond-cluster -n rbd-system
 
 >> watch autok3s kubectl get po -n rbd-system
+>> ...
 ```
