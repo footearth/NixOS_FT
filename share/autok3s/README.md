@@ -19,12 +19,18 @@
 >> docker pull nginxproxy/nginx-proxy
 >> docker pull cnrancher/autok3s:v0.4.6
 
+# binary
+>> aria2c
+
 >> docker-compose 
 >> k3d
 >> autok3s
->> aria2c
+
+>> kubecm
+>> octant
 >> vela
 
+>> download.fastgit.org
 >> hub.fastgit.xyz
 >> chmod +x
 >> mv /usr/bin
@@ -56,6 +62,29 @@
 >> helm list
 ```
 
+## Octant
+
+```bash
+>> octant --listener-addr 0.0.0.0:7777
+```
+
+## Rancher
+
+```bash
+>> docker run -d --privileged --restart=unless-stopped \
+    -p 8000:80 -p 8443:443 \
+    rancher/rancher:latest
+```
+
+## Kubevela
+
+```bash
+>> vela install
+>> vela addon enable velaux serviceType=LoadBalancer repo=acr.kubevela.net
+>> autok3s kubectl get service velaux -n vela-system
+>> vela port-forward --address 0.0.0.0 -n vela-system addon-velaux 9082:80
+```
+
 ## KubeSphere
 
 ```bash
@@ -73,18 +102,32 @@
 >> autok3s kubectl port-forward --address 0.0.0.0 -n kubesphere-system svc/ks-console 30880:80
 ```
 
-## Kubevela
+----
 
-```bash
->> vela install
->> vela addon enable velaux serviceType=LoadBalancer repo=acr.kubevela.net
->> autok3s kubectl get service velaux -n vela-system
->> vela port-forward --address 0.0.0.0 -n vela-system addon-velaux 9082:80
-```
+- k1s
+- k9s
+- OpenKruise
+- Kuboard
+- Kubenav
 
-## Rancher
+- k8slens
+- nocalhost
+
+----
+----
 
 ## Kubeapps
+
+```bash
+>> helm repo add bitnami https://charts.bitnami.com/bitnami
+>> autok3s kubectl create namespace kubeapps
+>> helm install kubeapps --namespace kubeapps bitnami/kubeapps
+
+>> kubectl create --namespace default serviceaccount kubeapps-operator
+>> kubectl create clusterrolebinding kubeapps-operator --clusterrole=cluster-admin --serviceaccount=default:kubeapps-operator
+
+>> autok3s kubectl port-forward --address 0.0.0.0 -n kubeapps svc/kubeapps 9082:80
+```
 
 ## Rainbond(failed)
 
