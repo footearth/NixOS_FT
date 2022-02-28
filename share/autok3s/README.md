@@ -71,7 +71,9 @@
 ## Rancher
 
 ```bash
->> docker run -d --privileged --restart=unless-stopped \
+>> docker run -d --privileged \
+    --name rancher \
+    --restart=unless-stopped \
     -p 8000:80 -p 8443:443 \
     rancher/rancher:latest
 ```
@@ -83,6 +85,13 @@
 >> vela addon enable velaux serviceType=LoadBalancer repo=acr.kubevela.net
 >> autok3s kubectl get service velaux -n vela-system
 >> vela port-forward --address 0.0.0.0 -n vela-system addon-velaux 9082:80
+```
+
+- first-vela-app: crccheck/hello-world
+
+```bash
+>> docker run -d --rm --name web-test -p 30880:8000 crccheck/hello-world
+>> autok3s kubectl port-forward --address 0.0.0.0 -n default (autok3s kubectl get pod -n default -o jsonpath='{.items[0].metadata.name}') 30880:8000
 ```
 
 ## KubeSphere
@@ -103,6 +112,7 @@
 ```
 
 ----
+----
 
 - k1s
 - k9s
@@ -113,7 +123,6 @@
 - k8slens
 - nocalhost
 
-----
 ----
 
 ## Kubeapps
